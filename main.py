@@ -2,7 +2,7 @@ import sys, pygame,os
 print("Répertoire courant :", os.getcwd())
 pygame.init()
 
-import enemies
+import entities
 
 
 screen = pygame.display.set_mode((640,480))
@@ -14,8 +14,8 @@ aliveenemies = []
 
 eimage = pygame.image.load(os.path.join("Ressources", "Rat.png")).convert()
 
-for i in range(10) : #Initialise 10 mobs
-    e = enemies.Mob1(i,20*i, eimage)
+for i in range(10) : #Initialise 10 rats
+    e = entities.Rat(i,20*i, eimage)
     aliveenemies.append(e)
 
 while 1:
@@ -29,5 +29,5 @@ while 1:
         e.move()
         screen.blit(e.image, e.pos)
     pygame.display.update()
-    pygame.time.delay(100)
+    pygame.time.delay(50)
     screen.fill((0,0,0))
