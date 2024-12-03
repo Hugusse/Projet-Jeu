@@ -12,9 +12,22 @@ class Player:
         self.pos = self.image.get_rect().move(spawn)
         self.state = 'still'
 
-    def move(self,x,y):
-        self.pos = self.pos.move(self.speed*x,self.speed*y)
-        self.state = 'moving'
+    def move_u(self):
+        self.pos = self.pos.move(0, -self.speed)
+        self.state = "moveup"
+
+    def move_d(self):
+        self.pos = self.pos.move(0, self.speed)
+        self.state = "movedown"
+
+    def move_l(self):
+        self.pos = self.pos.move(-self.speed, 0)
+        self.state = "moveleft"
+
+    def move_r(self):
+        self.pos = self.pos.move(self.speed, 0)
+        self.state = "moveright"
+
 
 
 class Rat:

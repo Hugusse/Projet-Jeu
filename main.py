@@ -7,14 +7,17 @@ import entities
 
 
 screen = pygame.display.set_mode((640,480))
-player = pygame.image.load( os.path.join("Ressources", "Joueur.png")).convert()
+playerimage = pygame.image.load( os.path.join("Ressources", "Joueur.png")).convert()
 background = pygame.image.load( os.path.join("Ressources", "BG.png")).convert()
 eimage = pygame.image.load(os.path.join("Ressources", "Rat.png")).convert()
 screen.blit(background,(0,0))
 
 aliveenemies = []
 
-p = entities.Player((320,240),player,2)
+clock = pygame.time.Clock()
+fps = 10
+
+player = entities.Player((320,240),playerimage,2)
 
 for i in range(10) : #Initialise 10 rats
     e = entities.Rat(i,20*i, eimage)
@@ -25,16 +28,29 @@ while 1:
         if event.type == pygame.QUIT:
             pygame.quit()
             sys.exit()
-        elif event.type == KEYDOWN:
-            if event.key == K_UP:
-                print("key up")
 
-    for e in aliveenemies:
-        screen.blit(background,(0,0))
-    for e in aliveenemies:
-        e.move()
-        screen.blit(e.image, e.pos)
-    screen.blit(p.image,p.pos)
+        elif event.type == KEYUP:
+            keys = pygame.key.get_pressed()
+            if not (keys[K_UP] or keys[K_DOWN] or keys[K_LEFT] or keys[K_RIGHT]):
+                player.state = "still"
+
+    keys = pygame.key.get_pressed()
+    if keys[K_UP]:
+        player.move_u()
+    if keys[K_DOWN]:
+        player.move_d()
+    if keys[K_LEFT]:
+        player.move_l()
+    if keys[K_RIGHT]:
+        player.move_r()
+
+
+    screen.blit(background,(0,0))     
+    for enemy in aliveenemies:
+        enemy.move()
+        screen.blit(enemy.image, enemy.pos)
+    
+    screen.blit(player.image,player.pos)
     pygame.display.update()
-    pygame.time.delay(50)
     screen.fill((0,0,0))
+    clock.tick(fps)
