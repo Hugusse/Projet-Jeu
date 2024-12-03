@@ -20,7 +20,7 @@ fps = 10
 player = entities.Player((320,240),playerimage,2)
 
 platforms = [
-    entities.Platform(100, 300, 200, 20, (0, 255, 0)),  # Plateforme verte
+    entities.Platform(100, 300, 400, 20, (0, 255, 0)),  # Plateforme verte
     entities.Platform(400, 200, 150, 20, (255, 0, 0)),  # Plateforme rouge
 ]
 
@@ -40,14 +40,7 @@ while 1:
                 player.state = "still"
 
     keys = pygame.key.get_pressed()
-    if keys[K_UP]:
-        player.move_u()
-    if keys[K_DOWN]:
-        player.move_d()
-    if keys[K_LEFT]:
-        player.move_l()
-    if keys[K_RIGHT]:
-        player.move_r()
+    player.move(keys, platforms)
 
 
     screen.blit(background,(0,0))     
