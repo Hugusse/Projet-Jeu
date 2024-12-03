@@ -45,7 +45,7 @@ while 1:
 
     screen.blit(background,(0,0))     
     for enemy in aliveenemies:
-        enemy.move(platforms)
+        enemy.move(player.pos,platforms)
         screen.blit(enemy.image, enemy.pos)
     
     for platform in platforms:

@@ -17,15 +17,6 @@ class Player:
         self.state = 'still'
 
     def move(self, keys, platforms):
-        # if keys[K_UP]:
-        #     self.pos = self.pos.move(0, -self.speed)
-        #     self.state = "moveup"
-        # if keys[K_DOWN]:
-        #     self.pos = self.pos.move(0, self.speed)
-        #     self.state = "movedown"
-
-        #Je rajouterais ces derniers pour des echelles
-
         if keys[K_LEFT]:
             self.pos = self.pos.move(-self.speed, 0)
             self.state = "moveleft"
@@ -59,12 +50,15 @@ class Rat:
         self.pos = self.image.get_rect().move(length, height)
         self.velocity = 0
         self.on_ground = False
-    def move(self, platforms): #A MODIF : doit faire avancer le mob vers le joueur mais on fera ca apres une fois qu'on aura def le joueur
-        self.pos = self.pos.move(self.speed, 0)
-        if self.pos.right >= 640:
-            self.speed = -(self.speed)
-        if self.pos.left <= 0:
-            self.speed = -(self.speed)
+    def move(self,player_position, platforms): #A MODIF : doit avoir un rayon de detection + et eviter de tomber si player en dehors du rayon
+        if self.pos.right - player_position.right < 0 :
+            self.pos = self.pos.move(self.speed, 0)
+        if self.pos.left - player_position.left > 0 :
+            self.pos = self.pos.move(-self.speed, 0)
+        # if self.pos.right >= 640:
+        #     self.speed = -(self.speed)
+        # if self.pos.left <= 0:
+        #     self.speed = -(self.speed)
         
         self.velocity += 1
         self.pos = self.pos.move(0,self.velocity)
