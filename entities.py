@@ -57,12 +57,27 @@ class Rat:
     def __init__(self, length, height,image):
         self.image = image
         self.pos = self.image.get_rect().move(length, height)
-    def move(self): #A MODIF : doit faire avancer le mob vers le joueur mais on fera ca apres une fois qu'on aura def le joueur
+        self.velocity = 0
+        self.on_ground = False
+    def move(self, platforms): #A MODIF : doit faire avancer le mob vers le joueur mais on fera ca apres une fois qu'on aura def le joueur
         self.pos = self.pos.move(self.speed, 0)
         if self.pos.right >= 640:
             self.speed = -(self.speed)
         if self.pos.left <= 0:
             self.speed = -(self.speed)
+        
+        self.velocity += 1
+        self.pos = self.pos.move(0,self.velocity)
+
+        self.on_ground = False
+        for platform in platforms:
+            if platform.check_collision(self.pos) and self.velocity > 0:
+                self.pos.bottom = platform.rect.top
+                self.velocity = 0
+                self.on_ground = True
+
+        if not self.on_ground:
+            self.velocity = min(self.velocity, 3)
 
 
 class Platform:
