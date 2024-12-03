@@ -29,7 +29,6 @@ class Player:
         self.state = "moveright"
 
 
-
 class Rat:
     speed = 1
     def __init__(self, length, height,image):
@@ -41,3 +40,15 @@ class Rat:
             self.speed = -(self.speed)
         if self.pos.left <= 0:
             self.speed = -(self.speed)
+
+
+class Platform:
+    def __init__(self, x, y, width, height, color=(255, 255, 255)):
+        self.rect = pygame.Rect(x, y, width, height)
+        self.color = color
+
+    def draw(self, screen):
+        pygame.draw.rect(screen, self.color, self.rect)
+
+    def check_collision(self, player_rect):
+        return self.rect.colliderect(player_rect)

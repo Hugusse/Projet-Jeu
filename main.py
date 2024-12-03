@@ -19,6 +19,11 @@ fps = 10
 
 player = entities.Player((320,240),playerimage,2)
 
+platforms = [
+    entities.Platform(100, 300, 200, 20, (0, 255, 0)),  # Plateforme verte
+    entities.Platform(400, 200, 150, 20, (255, 0, 0)),  # Plateforme rouge
+]
+
 for i in range(10) : #Initialise 10 rats
     e = entities.Rat(i,20*i, eimage)
     aliveenemies.append(e)
@@ -50,6 +55,8 @@ while 1:
         enemy.move()
         screen.blit(enemy.image, enemy.pos)
     
+    for platform in platforms:
+        platform.draw(screen)
     screen.blit(player.image,player.pos)
     pygame.display.update()
     screen.fill((0,0,0))
