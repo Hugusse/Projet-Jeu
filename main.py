@@ -17,7 +17,7 @@ aliveenemies = []
 clock = pygame.time.Clock()
 fps = 30
 
-player = entities.Player((320,240),playerimage,2)
+player = entities.Player((320,240),playerimage,2,100)
 
 platforms = [
     entities.Platform(0, 300, 400, 20, (0, 255, 0)),  # Plateforme verte
@@ -25,7 +25,7 @@ platforms = [
 ]
 
 for i in range(10) : #Initialise 10 rats
-    e = entities.Rat(i,20*i, eimage)
+    e = entities.Rat(i,20*i, eimage, 1, 50)
     aliveenemies.append(e)
 
 while 1:
