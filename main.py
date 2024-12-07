@@ -4,12 +4,13 @@ print("Répertoire courant :", os.getcwd())
 pygame.init()
 
 import entities
+import animations
 
 
 screen = pygame.display.set_mode((640,480))
-playerimage = pygame.image.load( os.path.join("Ressources", "Joueur.png")).convert()
-background = pygame.image.load( os.path.join("Ressources", "BG.png")).convert()
-eimage = pygame.image.load(os.path.join("Ressources", "Rat.png")).convert()
+playerimage = pygame.image.load( os.path.join("Assets","Player", "idle.png")).convert()
+background = pygame.image.load( os.path.join("Assets", "BG.png")).convert()
+eimage = pygame.image.load(os.path.join("Assets", "Rat.png")).convert()
 screen.blit(background,(0,0))
 
 aliveenemies = []
@@ -17,7 +18,7 @@ aliveenemies = []
 clock = pygame.time.Clock()
 fps = 30
 
-player = entities.Player((320,240),playerimage,2,100)
+player = entities.Player((320,240),playerimage,2,100, animations.AnimationManager)
 
 platforms = [
     entities.Platform(0, 300, 400, 20, (0, 255, 0)),  # Plateforme verte

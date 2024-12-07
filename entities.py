@@ -2,8 +2,10 @@ import pygame
 from pygame.locals import *
 pygame.init()
 
+from animations import AnimationManager
+
 class Player:
-    def __init__(self,spawn, image, speed,life):
+    def __init__(self,spawn, image, speed, life, animation_manager):
         self.life = life
         self.speed = speed
         self.image = image
@@ -16,6 +18,15 @@ class Player:
         self.is_rolling = False
         self.facing = 'R'
         self.is_invincible = False
+
+        #Debut de la partie animation
+        self.current_frame = 0
+        self.frame_timer = 0
+        self.animation_speed = 5
+        self.animation_manager = animation_manager
+        self.set_animation =('still')
+
+
 
     def reinit(self,spawn):
         self.pos = self.image.get_rect().move(spawn)
@@ -62,7 +73,30 @@ class Player:
         
         if keys[pygame.K_r] :
             self.is_rolling = True
+            self.state = 'rolling'
             self.roll_cooldown = 10
+
+        else:
+            self.set_animation('still')
+
+
+    def set_animation(self, state):
+        if state in self.animations:
+            self.state = state
+            self.current_frame = 0
+            self.frame_timer = 0
+
+    def update_animation(self):
+        frames = self.animations.get(self.state, self.animations["still"])
+        self.frame_timer += 1
+        if self.frame_timer >= self.animation_speed:
+            self.current_frame = (self.current_frame + 1) % len(frames)
+            self.frame_timer = 0
+        self.image = frames[self.current_frame]
+
+
+
+
 
 
 
@@ -75,6 +109,8 @@ class Rat: #juste une classe ennemie ap ??
         self.pos = self.image.get_rect().move(length, height)
         self.velocity = 0
         self.on_ground = False
+        self.state =  'still'
+
     def move(self,player_position, platforms): #A MODIF : doit avoir un rayon de detection en y mtn + bouger en random et eviter de tomber si player en dehors du rayon
         if self.pos.right - player_position.right < 0 and self.pos.right - player_position.right > -250:
             self.pos = self.pos.move(self.speed, 0)
