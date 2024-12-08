@@ -3,13 +3,13 @@ from pygame.locals import *
 print("Répertoire courant :", os.getcwd())
 pygame.init()
 
-import entities
-
+import entities 
+from entities import load_sprite_sheet
 
 screen = pygame.display.set_mode((640,480))
-playerimage = pygame.image.load( os.path.join("Ressources", "Joueur.png")).convert()
-background = pygame.image.load( os.path.join("Ressources", "BG.png")).convert()
-eimage = pygame.image.load(os.path.join("Ressources", "Rat.png")).convert()
+playerimage = pygame.image.load( os.path.join("Assets", "Player", "idle.png")).convert()
+background = pygame.image.load( os.path.join("Assets", "BG.png")).convert()
+eimage = pygame.image.load(os.path.join("Assets", "Rat.png")).convert()
 screen.blit(background,(0,0))
 
 aliveenemies = []
@@ -17,7 +17,9 @@ aliveenemies = []
 clock = pygame.time.Clock()
 fps = 30
 
-player = entities.Player((320,240),playerimage,2,100)
+player_walked_frames = load_sprite_sheet(os.path.join("Assets", "Player", "walk.png"), 8)
+player = entities.Player((320,240),playerimage,player_walked_frames,2,100)
+
 
 platforms = [
     entities.Platform(0, 300, 400, 20, (0, 255, 0)),  # Plateforme verte
@@ -50,7 +52,10 @@ while 1:
     
     for platform in platforms:
         platform.draw(screen)
-    screen.blit(player.image,player.pos)
+    if player.state in ['moveleft', 'moveright']:  # Si le joueur marche
+        screen.blit(player.image, player.image_rect)
+    else :
+        screen.blit(player.image,player.pos)
     pygame.display.update()
     screen.fill((0,0,0))
     clock.tick(fps)
