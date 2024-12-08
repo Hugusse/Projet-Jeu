@@ -1,9 +1,24 @@
-import pygame
+import pygame,os
 from pygame.locals import *
 pygame.init()
 
+def load_sprite_sheet(file_path, num_frames):
+    sprite= pygame.image.load(file_path).convert_alpha()
+
+    frame_width = sprite.get_width() // num_frames
+    frame_height = sprite.get_height()
+
+    frames = []
+
+    for i in range(num_frames):
+        rect = pygame.Rect(i * frame_width, 0, frame_width, frame_height)
+        frame = sprite.subsurface(rect)
+        frames.append(frame)
+
+    return frames
+
 class Player:
-    def __init__(self,spawn, image, speed,life):
+    def __init__(self, spawn, image, player_walked_frames, speed, life):
         self.life = life
         self.speed = speed
         self.image = image
@@ -16,34 +31,48 @@ class Player:
         self.is_rolling = False
         self.facing = 'R'
         self.is_invincible = False
+        
+        self.animations = {
+            'still': [self.image],
+            'moveleft': player_walked_frames,
+            'moveright': player_walked_frames,
+            'jump': [pygame.image.load(os.path.join("Assets", "Player", "jump.png")).convert()],
+            'roll': [pygame.image.load(os.path.join("Assets","Player", "idle.png")).convert()]
+        }
+        self.animation_index = 0
+        self.image = self.animations['still'][self.animation_index]
 
     def reinit(self,spawn):
         self.pos = self.image.get_rect().move(spawn)
         self.state = 'still'
 
+
     def move(self, keys, platforms):
-        if self.is_rolling : 
-            if self.roll_cooldown == 0 :
+        if self.is_rolling:
+            if self.roll_cooldown == 0:
                 self.is_rolling = False
-            if self.facing == 'L' :
+            if self.facing == 'L':
                 self.pos = self.pos.move(-self.speed * 2, 0)
-            if self.facing == 'R' :
+            if self.facing == 'R':
                 self.pos = self.pos.move(self.speed * 2, 0)
             self.roll_cooldown -= 1
+            self.update_animation('roll')
 
-        if not self.is_rolling:
+        elif keys[K_LEFT]:
+            self.pos = self.pos.move(-self.speed, 0)
+            self.state = "moveleft"
+            self.facing = 'L'
+            self.update_animation('moveleft')
+        elif keys[K_RIGHT]:
+            self.pos = self.pos.move(self.speed, 0)
+            self.state = "moveright"
+            self.facing = 'R'
+            self.update_animation('moveright')
+        else:
+            self.update_animation('still')
 
-            if keys[K_LEFT]:
-                self.pos = self.pos.move(-self.speed, 0)
-                self.state = "moveleft"
-                self.facing = 'L'
-            if keys[K_RIGHT]:
-                self.pos = self.pos.move(self.speed, 0)
-                self.state = "moveright"
-                self.facing = 'R'
-            
         self.velocity += 1
-        self.pos = self.pos.move(0,self.velocity)
+        self.pos = self.pos.move(0, self.velocity)
 
         self.on_ground = False
         for platform in platforms:
@@ -55,14 +84,25 @@ class Player:
         if not self.on_ground:
             self.velocity = min(self.velocity, 3)
 
-        if keys[K_SPACE]:
-            if self.on_ground:
-                self.velocity = -self.jump_strength
-                self.pos = self.pos.move(0,self.velocity)
-        
+        if keys[pygame.K_SPACE] and self.on_ground:
+            self.velocity = -self.jump_strength
+            self.pos = self.pos.move(0, self.velocity)
+            self.update_animation('jump')
+
         if keys[pygame.K_r] :
             self.is_rolling = True
             self.roll_cooldown = 10
+            self.update_animation('roll')
+
+    def update_animation(self, state):
+        if self.state == state:
+            if self.animation_index >= len(self.animations[state]) - 1:
+                self.animation_index = 0
+            else:
+                self.animation_index += 1
+        self.image = self.animations[state][self.animation_index]
+
+
 
 
 
