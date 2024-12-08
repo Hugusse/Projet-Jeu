@@ -22,6 +22,7 @@ class Player:
         self.life = life
         self.speed = speed
         self.image = image
+        self.image_left = pygame.transform.flip(image, True, False)
         self.pos = self.image.get_rect().move(spawn)
         self.velocity = 0
         self.jump_strength = 5
@@ -34,9 +35,10 @@ class Player:
         
         self.animations = {
             'still': [self.image],
-            'moveleft': player_walked_frames,
+            'moveleft': [pygame.transform.flip(frame, True, False) for frame in player_walked_frames],
             'moveright': player_walked_frames,
             'jump': [pygame.image.load(os.path.join("Assets", "Player", "jump.png")).convert()],
+            'jump_left': [pygame.transform.flip(pygame.image.load(os.path.join("Assets", "Player", "jump.png")).convert(), True, False)],
             'roll': [pygame.image.load(os.path.join("Assets","Player", "idle.png")).convert()]
         }
         self.animation_index = 0
@@ -48,6 +50,9 @@ class Player:
 
 
     def move(self, keys, platforms):
+        
+        walk_offset = 7
+
         if self.is_rolling:
             if self.roll_cooldown == 0:
                 self.is_rolling = False
@@ -62,14 +67,20 @@ class Player:
             self.pos = self.pos.move(-self.speed, 0)
             self.state = "moveleft"
             self.facing = 'L'
-            self.update_animation('moveleft')
+            if self.on_ground:
+                self.update_animation('moveleft')
         elif keys[K_RIGHT]:
             self.pos = self.pos.move(self.speed, 0)
             self.state = "moveright"
             self.facing = 'R'
-            self.update_animation('moveright')
+            if self.on_ground:
+                self.update_animation('moveright')
         else:
             self.update_animation('still')
+            if self.facing == 'R':
+                self.image = self.image
+            else:
+                self.image = self.image_left
 
         self.velocity += 1
         self.pos = self.pos.move(0, self.velocity)
@@ -87,21 +98,29 @@ class Player:
         if keys[pygame.K_SPACE] and self.on_ground:
             self.velocity = -self.jump_strength
             self.pos = self.pos.move(0, self.velocity)
-            self.update_animation('jump')
+            if self.facing == 'R' :
+                self.update_animation('jump')
+            else :
+                self.update_animation('jump_left')
 
         if keys[pygame.K_r] :
             self.is_rolling = True
             self.roll_cooldown = 10
             self.update_animation('roll')
+        
+        if self.state in ['moveleft', 'moveright']:
+            self.image_rect = self.image.get_rect(topleft=self.pos.topleft)
+            self.image_rect.y -= walk_offset
 
     def update_animation(self, state):
-        if self.state == state:
-            if self.animation_index >= len(self.animations[state]) - 1:
-                self.animation_index = 0
-            else:
-                self.animation_index += 1
+        if state not in self.animations or len(self.animations[state]) == 0:
+            return
+        
+        if self.animation_index >= len(self.animations[state]) - 1:
+            self.animation_index = 0
+        else:
+            self.animation_index += 1
         self.image = self.animations[state][self.animation_index]
-
 
 
 

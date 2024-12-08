@@ -2,6 +2,10 @@ Gestions des bords de l'ecran plus tard de la map
 
 Vie + attaques
 
-Les animations
+Les animations ca m'emmerde
+
+les sons
 
 c'est bon *??
+
+les deplacement et collisions auraient pu utiliser pygame.math.vector le moteur physique de pygame

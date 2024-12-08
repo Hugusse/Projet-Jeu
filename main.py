@@ -52,7 +52,10 @@ while 1:
     
     for platform in platforms:
         platform.draw(screen)
-    screen.blit(player.image,player.pos)
+    if player.state in ['moveleft', 'moveright']:  # Si le joueur marche
+        screen.blit(player.image, player.image_rect)
+    else :
+        screen.blit(player.image,player.pos)
     pygame.display.update()
     screen.fill((0,0,0))
     clock.tick(fps)
